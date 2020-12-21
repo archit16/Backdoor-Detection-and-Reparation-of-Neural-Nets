@@ -10,36 +10,45 @@
     └── anonymous_bd_weights.h5
     └── sunglasses_bd_net.h5
     └── sunglasses_bd_weights.h5
-├── architecture.py
-└── eval.py // this is the evaluation script
+├── accuracies
+    └── bd1/clean_accuracies_bd1.npy
+    └── bd1/poisoned_accuracies_bd1.npy
+    └── bd2/cean_accuracies_bd2.npy
+├── activations
+    └── Activations_bd1.npy
+    └── Activations_bd2.npy
 ```
 
 ## I. Dependencies
-   1. Python 3.6.9
-   2. Keras 2.3.1
-   3. Numpy 1.16.3
-   4. Matplotlib 2.2.2
-   5. H5py 2.9.0
-   6. TensorFlow-gpu 1.15.2
+   1. Python 3.8
+   2. Keras 2.4.3
+   3. Numpy 1.19.4
+   4. H5py 2.10.0
+   5. TensorFlow 2.2.0
+   6. Kerassurgeon 0.2.0
    
 ## II. Validation Data
    1. Download the validation and test datasets from [here](https://drive.google.com/drive/folders/13o2ybRJ1BkGUvfmQEeZqDo1kskyFywab?usp=sharing) and store them under `data/` directory.
    2. The dataset contains images from YouTube Aligned Face Dataset. We retrieve 1283 individuals each containing 9 images in the validation dataset.
    3. sunglasses_poisoned_data.h5 contains test images with sunglasses trigger that activates the backdoor for sunglasses_bd_net.h5.
 
-## III. Evaluating the Backdoored Model
-   1. The DNN architecture used to train the face recognition model is the state-of-the-art DeepID network. This DNN is backdoored with multiple triggers. Each trigger is associated with its own target label. 
-   2. To evaluate the backdoored model, execute `eval.py` by running:  
-      `python3 eval.py <clean validation data directory> <model directory>`.
-      
-      E.g., `python3 eval.py data/clean_validation_data.h5  models/sunglasses_bd_net.h5`.
-   3. Clean data classification accuracy on the provided validation dataset for sunglasses_bd_net.h5 is 97.87 %.
+## III. Contents
+	1. The files G1.py and G2.py generated repaired models for badnets B1 and B2 respectively. Although both the models implement the same fine-pruning method.
+	2. The generated repaired nets are saved in the G1 and G2 folders and can be loaded using Keras.Models.load_model(G2).
+	3. The activations folder contains the numpy array of the average activations of each channel in the last convolutional layer which is used to prune the network.
+	4. The accuracies folder contains the numpy array with the accuracies of the pruned model w.r.t the no of channels pruned. This is used to plot the graph of the same.
+	5. The file calc_activations.py has the function that gets the activations of each layer in the network.
 
-## IV. Evaluating the Submissions
-To aid teams in designing their defense, here are a few guidelines to keep in mind to get maximum points for the submission:  
-   1. Defense should generalize well to other backdoored networks. To verify the defense generalizability, the organizers will evaluate the submission on a specially curated BadNet, anonymous_bd_net.h5, with different trigger properties. 
-   2. Teams gain maximum points if the defense greatly reduces attack success rate on the trigger(s) while maintaining high clean classification accuracy.
-   3. Points will also be given to teams that identify poisoned images in the online test stream of images.
-   4. Fewer points will be allocated to teams that only detect the network as clean or backdoored.
-   5. Report should contain a description of the defense performance on adaptive attackers.
+## IV. Instructions
+	1. The repaired net can be loaded by using Keras.Models.load_model(G2) for testing on other backdoored data derived from the clean validation data provided to us.
+	2. The files G1.py and G2.py generate the repaired networks. 
+	3. The files G1.py and G2.py have the code to calculate activations, take the average for each channel and save the array to a file so that this lengthy calculation is not performed again and again. This part is commented out in the code and the arrays are being loaded because we had calculated them earlier. 
+	4. The activations are sorted and then used to perform Pruning and Fine-Pruning.
+	5. The files G1.py and G2.py also have code for Fine-Tuning, Pruning and Fine Pruning. Make sure to uncomment the relevant part of the code.
+
+
+
+## THANK YOU
+
+
 
